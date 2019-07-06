@@ -101,6 +101,7 @@
     let btn = document.querySelector('.weibo-btn')
     let ul = document.querySelector('.weibo-list')
 
+    let arr = [];
     // 设置点击发布按钮事件
     btn.onclick = function(){
         // 先获取文本域内容
@@ -118,6 +119,20 @@
 
         // 为了能够让数据在刷新的时候就有 所以我们每次点击的时候 都将数据存入本地中
         // 因为li里面会有很多数据 所以我们要用一个数组来存储对像
+        let obj = {
+            content : content,
+            time : time,
+        }
+
+        // 创建一个数组 将这个对象 存入数组里面 因为我们只能有一个key来获取本地数据  但是li是多个的 
+        // 将对象存入数组中
+        arr.push(obj);
+
+        // 为了存入localStorage中 我们需要先将数组转成JSON形式的字符串
+        let jsonStr = JSON.stringify(arr);
+
+        // 将数据存入本地
+        localStorage.setItem('wbData',jsonStr);
     }
 </script>
 
