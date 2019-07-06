@@ -101,9 +101,9 @@
     let btn = document.querySelector('.weibo-btn')
     let ul = document.querySelector('.weibo-list')
 
-    let arr = [];
+    // let arr = [];为了能在一开始就加载出数据  所以不能再这里创建一个空数组
     // 设置点击发布按钮事件
-    btn.onclick = function(){
+    btn.onclick = function () {
         // 先获取文本域内容
         let content = text.value;
         // 将获取的内容添加到li里面去 所以要创建li
@@ -113,27 +113,52 @@
         // 在li里面添加结构
         li.innerHTML = `<p class="content">${content}</p><span class="del">删除</span><span class="time">${time}</span>`;
         // 将添加好的结构之后 在页面中显示
-        ul.insertBefore(li,ul.children[0]);//将新放进来的li标签 添加到ul下面的第一个位置
+        ul.insertBefore(li, ul.children[0]);//将新放进来的li标签 添加到ul下面的第一个位置
         // 文本发布完成后，会将文本域清空
         text.value = '';
 
         // 为了能够让数据在刷新的时候就有 所以我们每次点击的时候 都将数据存入本地中
         // 因为li里面会有很多数据 所以我们要用一个数组来存储对像
         let obj = {
-            content : content,
-            time : time,
+            content: content,
+            time: time,
         }
 
         // 创建一个数组 将这个对象 存入数组里面 因为我们只能有一个key来获取本地数据  但是li是多个的 
         // 将对象存入数组中
-        arr.push(obj);
+        // arr.push(obj);
+        wbArr.push(obj);
 
         // 为了存入localStorage中 我们需要先将数组转成JSON形式的字符串
-        let jsonStr = JSON.stringify(arr);
+        let jsonStr = JSON.stringify(wbArr);
 
         // 将数据存入本地
-        localStorage.setItem('wbData',jsonStr);
+        localStorage.setItem('wbData', jsonStr);
     }
+
+    // 将本地存储的数据 在页面加载的时候 添加到页面中
+    // 那么我们一开始就要先获取数据
+    let jsonStr = localStorage.getItem('wbData');
+
+    // 先判断之前是否存有数据
+    let wbArr;//在这里声明全局变量
+    if (jsonStr == null) {
+        wbArr = [];
+    } else {
+        // 获取出来的数据是json形式的字符串 我们想要操作它 就必须先转换成js中的对象
+        wbArr = JSON.parse(jsonStr);
+    }
+
+    // 我们想要把每个li都添加到页面中 那么就要遍历
+    // 为了方便我们循环使用 所以 在这里先创建一个 let html = '' 的变量来叠加内容
+    let html = '';
+
+    wbArr.forEach(e => {
+        html += `<li><p class="content">${e.content}</p><span class="del">删除</span><span class="time">${e.time}</span></li>`;
+    });
+
+    // 再将他们拼接的结果 添加到页面中
+    ul.innerHTML = html;
 </script>
 
 </html>
