@@ -191,6 +191,16 @@
             localStorage.setItem('wbData', jsonStr);
         }
     })
+
+    // 实现键盘事件 按ctrl + 回车 实现点击发布效果
+    // 在文本域中实现键盘事件效果
+    text.onkeydown = function(e){
+        // 判断按的键是不是 ctrl 和回车
+        if(e.ctrlKey && e.keyCode === 13){
+            btn.onclick();
+        }
+    }
+
 </script>
 
 </html>
