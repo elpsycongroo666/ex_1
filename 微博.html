@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>微博发布效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .weibo {
+            width: 600px;
+            border: 1px solid #ccc;
+
+            margin: 100px auto;
+            padding: 10px;
+
+        }
+
+        .weibo-text {
+            width: 590px;
+            height: 140px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+        }
+
+        .weibo-text:focus {
+            border-color: #f60;
+        }
+
+        .weibo-btn {
+            width: 80px;
+            height: 30px;
+            background-color: #f90;
+            color: #fff;
+            border: 0 none;
+            margin-top: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            outline: 0 none;
+        }
+
+        .weibo-list {
+            padding-top: 10px;
+        }
+
+        .weibo-list li {
+            font-size: 14px;
+            line-height: 30px;
+            border-bottom: 1px dotted #ccc;
+            overflow: hidden;
+        }
+
+        .weibo-list li p {
+            float: left;
+        }
+
+        .weibo-list li span {
+            float: right;
+            cursor: pointer;
+        }
+
+        .weibo-list li input {
+            height: 24px;
+            line-height: 24px;
+            width: 300px;
+            font-size: 14px;
+            border: 0 none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weibo">
+        <textarea class="weibo-text"></textarea>
+        <input class="weibo-btn" value="发布" type="button">
+        <ul class="weibo-list">
+            <!-- <li>
+                <p>快来收了这九款用上就停不下来的应用吧！！</p>
+                <span>删除</span>
+            </li>
+            <li>
+                <p>超级详细的云南大理自助游攻略</p>
+                <span>删除</span>
+            </li>
+            <li>
+                <p>外国最近很火的舞蹈，舒服简单自然，太棒了！</p>
+                <span>删除</span>
+            </li> -->
+        </ul>
+    </div>
+</body>
+<script src="../7.4/ex/kits.js"></script>
+<script>
+    let text = document.querySelector('.weibo-text')
+    let btn = document.querySelector('.weibo-btn')
+    let ul = document.querySelector('.weibo-list')
+
+    // 设置点击发布按钮事件
+    btn.onclick = function(){
+        // 先获取文本域内容
+        let content = text.value;
+        // 将获取的内容添加到li里面去 所以要创建li
+        let li = document.createElement('li');
+        // 通过kits.JS文件获取当前时间的方法
+        let time = kits.formateDate();
+        // 在li里面添加结构
+        li.innerHTML = `<p class="content">${content}</p><span class="del">删除</span><span class="time">${time}</span>`;
+        // 将添加好的结构之后 在页面中显示
+        ul.insertBefore(li,ul.children[0]);//将新放进来的li标签 添加到ul下面的第一个位置
+        // 文本发布完成后，会将文本域清空
+        text.value = '';
+
+        // 为了能够让数据在刷新的时候就有 所以我们每次点击的时候 都将数据存入本地中
+        // 因为li里面会有很多数据 所以我们要用一个数组来存储对像
+    }
+</script>
+
+</html>
