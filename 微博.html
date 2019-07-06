@@ -153,12 +153,44 @@
     // 为了方便我们循环使用 所以 在这里先创建一个 let html = '' 的变量来叠加内容
     let html = '';
 
-    wbArr.forEach(e => {
-        html += `<li><p class="content">${e.content}</p><span class="del">删除</span><span class="time">${e.time}</span></li>`;
-    });
+    // 为了在加载页面的时候 不会将数据从顶部 放到底部 所以这里我们不用foreach 方法来遍历 使用for循环来倒叙
+    // wbArr.forEach(e => {
+    //     html += `<li><p class="content">${e.content}</p><span class="del">删除</span><span class="time">${e.time}</span></li>`;
+    // });
+    for (let i = wbArr.length - 1; i >= 0; i--) {
+        html += `<li><p class="content">${wbArr[i].content}</p><span class="del" data-id="${wbArr[i].id}">删除</span><span class="time">${wbArr[i].time}</span></li>`;
+    }
 
     // 再将他们拼接的结果 添加到页面中
     ul.innerHTML = html;
+
+
+    // 为了实现删除效果 我们必须使用事件委托
+    ul.addEventListener('click', function (e) {//这里使用这种方式添加事件是为了防止后面ul还要添加其他事件的时候会将前面的覆盖掉
+        if (e.target.className === 'del') {
+            // 把页面中的li移除
+            ul.removeChild(e.target.parentNode);//目标的父元素 即 li标签
+            // 但是单单删除页面中的li还不够 还需要继续将本地数据移除
+            // 需要先将数据获取出来
+            let jsonStr = localStorage.getItem('wbData');
+            // 将本地获取出来的数据 转换成js中的对象
+            let arr = JSON.parse(jsonStr);
+            // 为了删除对应的数据 我们就会先在js中创建一个获取唯一id的方法 时间戳  + '' + 随机数 因为id是字符串形式 加这个''是为了将数字转换成字符串
+            let id = e.target.dataset.id;// 获取类名为del标签 里面的自定义属性 id
+            // 遍历数组
+            arr.forEach((e, i) => {
+                // 判断这个id是否是对应的id
+                if (id == e.id) {
+                    // 此时就选到了相应的id
+                    // 那么就将对应的数据删除
+                    arr.splice(i, 1)
+                }
+            });
+            // 删除掉了之后 还要将删除之后的数据 存入本地中 覆盖原来的
+            jsonStr = JSON.stringify(arr);
+            localStorage.setItem('wbData', jsonStr);
+        }
+    })
 </script>
 
 </html>
