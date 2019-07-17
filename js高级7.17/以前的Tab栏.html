@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style> 
+    *{
+        margin: 0;
+        padding: 0;
+    }    
+    ul {
+        list-style: none;
+    }
+    .container {
+        height: 400px;
+        width: 600px;
+        margin: 100px auto;
+        border: 1px solid #000;
+    }
+    .nav li{
+        float: left;
+        height: 60px;
+        width: 100px;
+        text-align: center;
+        line-height: 60px;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+    }
+    .nav::after,.nav::before {
+        content: "";
+        clear: both;
+        display: block;
+    }
+    .row{
+        border-top: 1px solid #000;
+    }
+    .content {
+        height: 338px;
+        background-color: green;
+        display: none;
+    }
+    .row .show {
+        display: block;
+    }
+    .nav li.active {
+        background-color: hotpink;
+    }
+</style>
+<body>
+    <div class="container">
+        <ul class="nav">
+            <li class="active">影音</li>
+            <li>书籍</li>
+            <li>零食</li>
+        </ul>   
+    <div class="row">
+        <div class="content show">影音的对应的内容</div>
+        <div class="content">书籍的对应的内容</div>
+        <div class="content">零食的对应的内容</div>
+    </div>
+</div>
+</body>
+<script>
+    /*当鼠标移入
+        当前的li会变成特殊，其他的li变得一般
+        找到和当前li对应的一个div元素，把其他div隐藏
+    */
+    let lis = document.querySelectorAll('.nav > li');
+    let contents = document.querySelectorAll('.content');
+    lis.forEach((e,i)=>{
+        e.onmouseover = function(){
+            lis.forEach(e=>{
+                e.classList.remove('active');
+            })
+            this.classList.add('active');
+            // 根据this的索引，找到对应div
+            // 先把所有的内容隐藏
+            contents.forEach(e=>{
+                e.classList.remove('show');
+            })
+            // 把对应的div显示 就是把li的索引对应给它
+            contents[i].classList.add('show');
+        }
+    })
+
+</script>
+</html>

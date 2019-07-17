@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</body>
+<script>
+    /*
+        call的三种使用方式
+        1.借用大分类的属性
+        2.借用方法
+        3.转换成数组
+    */    
+
+    // 第一种
+    // function Person(name,age,gender){
+    //     this.name = name;
+    //     this.age = age;
+    //     this.gender = gender;
+    // }
+
+    // function Student(name,age,gender,number){
+    //     Person.call(this,name,age,gender);
+    //     this.number = number;
+    // }
+
+    // let s1 = new Student('小明',12,'男','007');
+    // console.log(s1);
+
+
+
+
+    // // 第二种
+    // let lis = document.getElementsByTagName('li');// => 获取出来的是伪数组
+
+    // console.log(lis);// =>HTMLcollection 伪数组 他的原型上面 没有 forEach方法 我们想要使用这个方法 那就使用call()这个方法来借用 数组Array里面的foreach
+
+    // Array.prototype.forEach.call(lis,function(e,i){
+    //     console.log(e);
+    //     console.log(i);
+    //     e.innerText = i;
+    // })
+
+
+
+    // 数组.slice(从哪里开始的索引，获取到哪里的索引) 将数组复制一份
+    // 数组.splice(从哪里开始的索引, 获取多少个) 将数组剪切一份
+    // 第三种 => 考虑到不是什么时候都可以借用 比如借用push() 就不行 会报错 所以 我们就会先把它转换成数组 在用数组的方法
+    // 通过使用slice 将为数组转换成数组  
+    // let lis = document.getElementsByTagName('li');
+    // let newArr = Array.prototype.slice.call(lis,0);
+    // console.log(newArr);
+    // newArr.forEach((e,i) => {
+    //     console.log(e);
+    //     console.log(i);
+    //     e.innerText = i;
+    // });
+
+    let dom = document.querySelectorAll('li');
+        // dom.forEach((e,i) =>{})
+        for(let i = 0; i < dom.length ; i++){
+            console.log(this[i] = dom[i]);
+        }
+     
+</script>
+</html>

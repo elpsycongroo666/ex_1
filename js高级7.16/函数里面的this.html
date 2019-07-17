@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 200px;
+        height: 200px;
+        background: red;
+    }
+</style>
+
+<body>
+    <div class="box"></div>
+</body>
+<script>
+    /*
+        普通函数 
+        function fn(){} => this指向window
+        回调函数
+        计时器 (interval)() => this指向window
+        构造函数
+        function Person(){} => 指向实例对象 Person
+        事件处理程序
+        btn.onclick = function(){} => 事件源
+        对象的方法
+        let obj = {} => 指向实例对象
+        箭头函数
+        () =>{}    => 指向上一级作用域
+    */
+    // 普通函数
+    function fn() {
+        console.log(this);
+    }
+    fn();
+    // 定时器(回调函数)
+    // setInterval(function(){
+    //     console.log(this);
+    // },1000)
+    // forEach(回调函数)
+    let arr = [1, 2, 3];
+    arr.forEach(function () {
+        console.log(this);
+    })
+    // 构造函数
+    function Person(name, age) {
+        this.name = name;
+        this.age = age;
+        console.log(this);
+    }
+    let p1 = new Person('小狗', 12);
+    // 事件处理程序中的函数
+    let box = document.querySelector('.box');
+    box.onclick = function () {
+        console.log(this);
+    }
+    // 对象中的函数
+    let obj = {
+        name: '狗蛋',
+        sayHi: function () {
+            console.log(this);
+        }
+    }
+    obj.sayHi();
+    // 箭头函数
+    let a = () => {
+        console.log(this);
+    }
+    a();
+    let obj = {
+        name: 'xiao',
+        sayHi: function () {
+            let a = () => {
+                console.log(this);
+            }
+        a();
+        }
+    }
+
+
+
+</script>
+
+</html>

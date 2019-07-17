@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // function fn(a,b){
+    //     return a + b;
+    // }
+    // console.dir(fn); 是一个无序键值对的集合 fn {}  =>所以是一个对象
+    // let f = new fn();
+    // console.log(f);
+
+    // 研究函数的一家三口
+    // 我们发现 fn()这个函数里面有 __proto__ 和 prototype 两个原型 那么我们就要看这个函数是 以哪种方式存在的 如果是以实例对象的形式存在 那么就看他的__proto__ 如果是以 构造函数的形式存在的话， 那就用prototype来看他的原型里面的东西
+
+    // 因为函数也是对象 平时我们的创建函数 用了语法糖的形式写 缩写了 函数  他原本是这样写的 如 let fn = new Function();
+    let fn = new Function('a','b','return a + b;');
+    // 实际上这个就是一个Function的构造函数的实例对象 
+    // 我们要验证它
+
+    console.log(fn instanceof Function);// =>结果是true
+
+    // 所以我们就可以使用 对象.方法的形式去调用方法
+    
+
+
+    // 我们先研究他的家族
+    console.log(Function.prototype === fn.__proto__); // => ture
+    console.log(Function.prototype.constructor === Function); // => true
+    console.log(fn.__proto__.__proto__ === Object.prototype);// => true
+    console.log(Function.prototype.__proto__.__proto__); // null
+</script>
+</html>

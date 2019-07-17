@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 600px;
+            height: 400px;
+            border: 1px solid #000;
+            margin: 100px auto;
+        }
+
+        .nav::after,
+        .nav::before {
+            content: "";
+            clear: both;
+            display: block;
+        }
+
+        .nav li {
+            float: left;
+            width: 100px;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            border-bottom: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+
+        .nav li.active {
+            background-color: hotpink;
+        }
+
+        .nav li.red {
+            background-color: red;
+        }
+
+        .row {
+            border-top: 1px solid #000;
+        }
+
+        .row .content {
+            height: 338px;
+            background-color: green;
+            display: none;
+        }
+
+        .row .show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 每个分类 -->
+        <ul class="nav">
+            <li class="active">影音</li>
+            <li>书籍</li>
+            <li>零食</li>
+        </ul>
+        <!-- 分类对应的多个内容 -->
+        <div class="row">
+            <div class="content show">影音的对应的内容</div>
+            <div class="content">书籍的对应的内容</div>
+            <div class="content">零食的对应的内容</div>
+        </div>
+    </div>
+</body>
+<script>
+    /*
+      封装面向对象的代码的步骤：
+        1.抽象出类
+        2.在类的语法里面封装属性和方法
+        3.new一个对象，调用对象的属性或者是方法来实现效果
+    */
+    class Tab {
+        // tab栏有属性 - 只要是代码中可以产生变化的东西，都可以认为是对象的属性
+        // 会变化的类名
+        /*
+        li的选择器          navSelector
+        内容的选择器        contentSelector
+        触发的事件类型      type
+        特殊的li的类名      navClass
+        显示隐藏内容的类名  contentClass
+        */
+
+        constructor(options) {
+            // opstions必须是一个对象或者不传，为了可以省略传参和无序传参
+            options = options || {};
+            // 分别给不同的参数设置默认值
+            this.navSelector = options.navSelector || '.nav > li';
+            this.contentSelector = options.contentSelector || '.content';
+            this.type = options.type || 'mouseover';
+            this.navClass = options.navClass || 'active';
+            this.contentClass = options.contentClass || 'show';
+        }
+        // tab栏有哪些方法
+        // 需要让对象，调用哪些方法才可以实现效果
+        addEvent() {
+            let _this = this;
+            // 获取对应的元素
+            let lis = document.querySelectorAll(this.navSelector);
+            let contents = document.querySelectorAll(this.contentSelector);
+
+            // 先给每一个li都注册事件 所以先遍历
+            lis.forEach((e, i) => {
+                e.addEventListener(this.type, function () {
+                    // 先把全部变成普通 所以再次遍历
+                    lis.forEach(e => {
+                        // 因为这个是箭头函数 所以this会指向上一层作用域 
+                        // 这里就会指事件源所以不是我们要的this 我们在外部使用 
+                        // 闭包的形式引入一个我们想要的this 命名为_this
+                        e.classList.remove(_this.navClass);
+                    })
+                    this.classList.add(_this.navClass);
+                    // 根据this的索引，找打对应div
+                    contents.forEach(e => {
+                        e.classList.remove(_this.contentClass);
+                    });
+                    // 把对应div显示
+                    contents[i].classList.add(_this.contentClass);
+                })
+            });
+        }
+    }
+
+    // 调用封装好的代码，实现tab栏
+    let tab = new Tab();
+
+    tab.addEvent();
+</script>
+
+</html>

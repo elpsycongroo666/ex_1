@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    /*
+    作用
+        1.修改this,把函数的副本返回
+
+    用法
+        函数.bind(新的this,参数1,参数2,...)
+    
+    返回值 
+        被借用的函数的副本 - 复制了一份
+    */
+
+    function fn(a,b,c){
+        console.log(this);
+        console.log(a,b,c);
+    }
+    fn();
+    let obj = {
+        name : '小胡',
+    }
+    let res = fn.bind(obj,10,20,30);
+    console.log(res); //看到res返回的就是fn这函数
+    res(); //可以再次调用这个函数 但是再次传入参数 无效
+
+
+
+    // 但是bind通常的使用场景就是 通常用于回调函数的this修改
+    function fn(){
+        console.log(this);
+    }
+    // setInterval(function(){
+        // console.log(this)
+    // }.bind(this),1000)
+
+
+    setInterval(fn.bind({name : '狗屎'}),1000);
+</script>
+</html>

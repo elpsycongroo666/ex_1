@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    .container {
+        height: 400px;
+        width: 600px;
+        margin: 100px auto;
+        border: 1px solid #000
+    }
+
+    .nav li {
+        float: left;
+        height: 60px;
+        width: 100px;
+        text-align: center;
+        line-height: 60px;
+        border-right: 1px solid #000;
+    }
+
+    .nav::after,
+    .nav::before {
+        clear: both;
+        display: block;
+        content: '';
+    }
+
+    .content {
+        height: 338px;
+        background: green;
+        display: none;
+    }
+
+    .container .show {
+        display: block;
+    }
+
+    .nav li.active {
+        background: hotpink;
+    }
+    .nav li.red{
+        background: red;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <ul class="nav">
+            <li class="active">影音</li>
+            <li>书籍</li>
+            <li>零食</li>
+        </ul>
+        <div class="content show">影音的对应的内容</div>
+        <div class="content">书籍的对应的内容</div>
+        <div class="content">零食的对应的内容</div>
+    </div>
+</body>
+<script>
+    /*
+        面向对象的代码封装步骤
+        1.抽象出类
+        2.在类的语法里面封装属性和方法
+        3.new一个对象，调用对象的属性或者是方法来实现效果
+    */
+
+    class Tab {
+        // tab栏有属性 - 只要是代码中可以产生变化的东西，都可以认为是对象的属性
+        // 会变化的类型
+        /*
+            li的选择器 navSelector
+            内容的选择 contentSelector
+            触发的事件类型 type
+            特殊的li的类名 navClass
+            显示隐藏内容的类名 contentClass
+        */
+        constructor(options) {
+            this.navSelector = options.navSelector || '.nav > li';
+            this.contentSelector = options.contentSelector || '.content';
+            this.type = options.type || 'mouseover';
+            this.navClass = options.navClass || 'active';
+            this.contentClass = options.contentClass || 'show';
+        }
+
+        // tab栏有哪些方法
+        // 需要让对象调用哪些方法才可以实现效果
+        addEvent() {
+            // 页面中 有哪些东西是需要变化的？ 
+            // 那么就把那些变化的都先获取出来 肯定会用到
+            let _this = this;
+            let lis = document.querySelectorAll(this.navSelector);
+            let contents = document.querySelectorAll(this.contentSelector);
+            // 先给所有的li都注册事件
+            lis.forEach((e, i) => {
+                e.addEventListener(this.type, function () {
+                    // 先把所有的li都变成普通
+                    lis.forEach(e => {
+                        // 这里的this指向的是事件源 但是我们要的是事件对象
+                        e.classList.remove(_this.navClass);
+                    })
+                    this.classList.add(_this.navClass);
+
+                    // 当我们鼠标移到对应的li的时候 会显示对应的div 所以也要写在事件类型里面
+                    // 那么我也是通过先把他们全部都变成普通
+                    contents.forEach(e=>{
+                        e.classList.remove(_this.show);
+                    })
+                    // 通过鼠标划入或得对应li的索引 就可以给div来用这个索引找出对应的div显示
+                    contnes[i].classList.add(_this.show);
+                })
+            })
+        }
+    }
+
+// 创建对象
+let tab = new Tab({
+    navClass : 'red',
+});
+// 调用实现这个tab栏的方法
+tab.addEvent();
+</script>
+
+</html>

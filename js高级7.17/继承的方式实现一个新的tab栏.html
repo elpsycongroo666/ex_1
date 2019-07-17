@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .container {
+      width: 600px;
+      height: 400px;
+      border: 1px solid #000;
+      margin: 100px auto;
+    }
+
+    .nav::after,
+    .nav::before {
+      content: "";
+      clear: both;
+      display: block;
+    }
+
+    .nav li {
+      float: left;
+      width: 100px;
+      height: 60px;
+      text-align: center;
+      line-height: 60px;
+      border-bottom: 1px solid #000;
+      border-right: 1px solid #000;
+    }
+
+    .nav li.active {
+      background-color: hotpink;
+    }
+    .nav li.red {
+      background-color: red;
+    }
+
+    .row {
+      border-top: 1px solid #000;
+    }
+
+    .row .content {
+      height: 338px;
+      background-color: green;
+      display: none;
+    }
+
+    .row .show {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- 每个分类 -->
+    <ul class="nav">
+      <li class="active">影音</li>
+      <li>书籍</li>
+      <li>零食</li>
+    </ul>
+    <!-- 分类对应的多个内容 -->
+    <div class="row">
+      <div class="content show">影音的对应的内容</div>
+      <div class="content">书籍的对应的内容</div>
+      <div class="content">零食的对应的内容</div>
+    </div>
+  </div>
+</body>
+<script src="./tab.js"></script>
+<script>
+    /*
+    使用继承，把之前写过的tab栏的代码，继承过来
+    */
+
+    // class 子类 extends 父类{}
+
+    /*
+        我们希望做的是一个可以自动切换的tab栏
+            定时器的间隔是可变的 - 多了一个新的属性
+
+        需要一个自动切换的方法
+    */
+
+class AutoTab extends Tab {
+    constructor(options){
+        super(options);
+        // 可以设置属性 也可以不设置
+        options = options || {};
+        // 添加新属性
+        this.interval = options.interval || 1000;
+    }
+    autoPlay(){
+        // 定义一个变量，保存过当前是第几个li
+        let index = 0;
+        // 每隔一段时间
+        setInterval(()=>{
+
+            // 让对应的li特殊
+            let lis = document.querySelectorAll(this.navSelector);
+            let contents = document.querySelectorAll(this.contentSelector);
+            // 让li从0-1-2-0-1-2
+            // 让索引 ++
+            index = ++index % lis.length;
+            // 相当于
+            // if(index == 2){
+            //     index = 0;
+            // }else{
+            //     index++;
+            // }
+            lis.forEach(e=>{
+                e.classList.remove(this.navClass);
+            })
+            lis[index].classList.add(this.navClass);
+            // 对应的内容显示
+            contents.forEach(e=>{
+                e.classList.remove(this.show);
+            })
+            contents[index].classList.add(this.show);
+        },this.interval)
+    }
+}
+
+let auto = new AutoTab();
+auto.addEvent();
+auto.autoPlay({
+    interval : 1000
+});
+</script>
+
+</html>

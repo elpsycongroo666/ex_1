@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    /*
+        作用
+            1.调用函数
+            2.修改函数里面的this
+
+        用法
+            函数.apply(新的this,[参数1,参数2,...])
+            注意 ：新的this后面的参数 必须是一个数组 里面才放参数
+        返回值
+            被调用的函数的返回值就是apply的返回值
+    */
+    // let arr = [1,2,3,4,5,6];
+    // function fn(a,b,c){
+    //     console.log(this);
+    //     console.log(a,b,c);
+    //     return a + b + c;
+    // }
+    
+    // let obj = {
+    //     name : '狗蛋',
+    // }
+
+    // let res = fn.apply(obj,[10,20,30]);
+    // console.log(res);
+
+    // apply的第一种使用方式
+    function Person(name,age){
+        this.name = name;
+        this.age = age;
+    }
+
+    function Student(name,age){
+        Person.apply(this,[name,age]); //使用apply 参数必须是数组
+    }
+    let s1 = new Student('小明',12);
+    console.log(s1);
+
+
+    // apply的第二种使用方式
+    let arr = [123,5,48,33,45,66,211,54];
+    // 如果直接用Math.max() 这个方法 的话 就要把数值一个一个的输入进去 不能直接写存储这个数组的变量  所以我们为了快速找到数组中的最大值或者最小值 我们就用apply
+    let max = Math.max.apply(null,arr);
+    console.log(max);
+</script>
+</html>
