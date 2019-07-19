@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        input {
+            outline: none;
+            border: 1px solid #333;
+        }
+
+        .form {
+            width: 400px;
+            margin: 100px auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .cell {
+            padding: 0 10px;
+            line-height: 55px;
+        }
+
+        .f2 {
+            flex: 2;
+        }
+
+        .f3 {
+            flex: 3;
+        }
+
+        .control {
+            display: inline-block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: #333;
+            background-color: #fff;
+            border-color: #ccc;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form">
+        <form action="" id="registerForm" method="get">
+            <div class="row">
+                <div class="cell f2">请输入用户名：</div>
+                <div class="cell f3"><input type="text" class="control" name="userName"></div>
+            </div>
+            <div class="row">
+                <div class="cell f2">请输入密码：</div>
+                <div class="cell f3"><input type="text" class="control" name="password"></div>
+            </div>
+            <div class="row">
+                <div class="cell f2">请输入手机号码：</div>
+                <div class="cell f3"><input type="text" class="control" name="phoneNumber"></div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="cell f2"></div>
+                <div class="cell f3">
+                    <input type="submit" class="btn" value="提交">
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+<script>
+    /*
+        上个页面的推导
+            可以把判断代码分割了，但是还是在事件里面写了很多的判断
+            
+            解决的思路：
+                把多个判断的函数，放到一个数组里面，用一个专门验证的函数，调用数组里面的每一个方法，返回每个方法的错误信息
+    */
+
+    let isNonEmpty = function () {
+        if (form.userName.value === '') {
+            return '用户名不能为空';
+        }
+    }
+
+    let minLength = function () {
+        if (form.userName.value.length < 8) {
+            return '用户名的长度不能小于8';
+        }//满足条件就返回字符串 不满足 就返回undefined
+    }
+    // 把要判断的函数都放到这个数组里面
+    let validateFuncs = [isNonEmpty, minLength];
+    // 然后再来一个函数进行验证
+    function validate() {
+        for(let i = 0; i < validateFuncs.length; i++){
+            let errMsg = validateFuncs[i]();
+            if(errMsg){
+                return errMsg;
+            }
+        }
+    }
+
+
+    let form = document.querySelector('#registerForm');
+    let btn = document.querySelector('.btn');
+
+    btn.onclick = function (e) {
+        let errMsg = validate();
+        if (errMsg) {
+            e.preventDefault();
+            alert(errMsg);
+        }
+    }
+
+</script>
+
+</html>
