@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // // 创建一个XMLHttpRequest实例
+    // var xhr = new XMLHttpRequest();
+    // // 准备打开一个请求地址
+    // xhr.open('get','http://127.0.0.1:8080')
+    // // 发送请求
+    // xhr.send();
+    // // 监听通信的状态
+    // xhr.onreadystatechange = function(){
+    //     // 在这里面判断通信的状态 readyState 和 status
+    //     // 首先是readyState 再到status
+    //     if(xhr.readyState === 4){
+    //         if(xhr.status === 200){
+    //             var res = xhr.response;
+    //             document.write(res);
+    //         }
+    //     }
+    // }
+
+
+
+        // 第一步先创建一个XMLHttpRequest实例
+        // var xhr = new XMLHttpRequest();
+        // // 准备打开一个请求地址
+        // xhr.open('get','http://127.0.0.1:8080/getRandomJocke');
+        // // 发送请求
+        // xhr.send();
+        // // 监听通信的状态
+        // xhr.onreadystatechange = function(){
+        //     // 判断接收的四个过程的最后一个
+        //     if(xhr.readyState === 4){
+        //         // 再判断再判断这个数据是否被更改 或者被找到的情况 有304 404 502 200是成功响应
+        //         if(xhr.status === 200){
+        //             var res = xhr.response;
+        //             document.write(res);
+        //         }
+        //     }
+        // }
+
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('get','http://127.0.0.1:8080/talkToServer');
+        // xhr.send();
+        // xhr.onreadystatechange = function(){
+        //     if(xhr.readyState === 4){
+        //         if(xhr.status === 200){
+        //             var res = xhr.response;
+        //             document.write(res);
+        //         }
+        //     }
+        // }
+
+
+        //  var xhr = new XMLHttpRequest();
+        //  xhr.open('get','http://127.0.0.1:8080/talkToServer');
+        //  xhr.send();
+        //  xhr.onreadystatechange = function(){
+        //      if(xhr.readyState === 4){
+        //          if(xhr.status === 200){
+        //              var res = xhr.response;
+        //              document.write(res);
+        //          }
+        //      }
+        //  }
+
+            // var xhr = new XMLHttpRequest();
+            // xhr.open('get','http://127.0.0.1:8080/talkToServer');
+            // xhr.send();
+            // xhr.onreadystatechange = function(){
+            //     if(xhr.readyState === 4){
+            //         if(xhr.status === 200){
+            //             var res = xhr.response;
+            //             document.write(res);
+            //         }
+            //     }
+            // }
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('get','http://127.0.0.1:8080/talkToServer');
+            xhr.send();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    if(xhr.status === 200){
+                        let res = xhr.response;
+                        document.write(res);
+                    }
+                }
+            }
+</script>
+</html>

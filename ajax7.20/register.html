@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>表单注册</title>
+    <style>
+        form {
+            padding-top: 100px;
+            padding-left: 100px;
+        }
+
+        form>* {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        form-item input {
+            height: 32px;
+            border: none;
+            width: 500px;
+            box-shadow: 0 0 0 1px #e7e7e7 inset;
+            text-indent: 8px;
+        }
+
+        .pre_register,
+        .register {
+            display: inline-block;
+            width: 120px;
+            line-height: 40px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            margin-left: 100px;
+        }
+
+        .register {
+            background-color: dodgerblue;
+            border: none;
+            outline: none;
+        }
+
+        .register:hover {
+            background-color: deepskyblue;
+        }
+
+        .disable {
+            background-color: #666;
+        }
+
+        .error::after {
+            position: absolute;
+            top: 50%;
+            transform: translate(8px, -50%);
+            color: rgb(224, 51, 51);
+            content: attr(data-error);
+        }
+
+        .correct::after {
+            position: absolute;
+            top: 50%;
+            transform: translate(8px, -50%);
+            color: rgb(95, 238, 95);
+            content: attr(data-correct);
+        }
+
+        form-item {
+            display: block;
+        }
+
+        #toast {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 9;
+        }
+
+        #toast span {
+            padding: 8px 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 4px;
+            -webkit-user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form>
+        <form-item class="name">
+            用&ensp;户&ensp;名：<input type="text" placeholder="请输入用户名" name='name' required="true" />
+        </form-item>
+
+        <form-item class="pwd">
+            密&emsp;&emsp;码：<input type="password" placeholder="请输入密码" name='pwd' required="true" />
+        </form-item>
+
+        <form-item class="repwd">
+            确认密码：<input type="password" placeholder="请输入密码" required="true" />
+        </form-item>
+
+        <input type="submit" class="register" value="注册">
+    </form>
+</body>
+<script src="./js/jquery.js"></script>
+<script src="./js/extend.js"></script>
+<script>
+    $('input[name="name"]').on('blur', function () {
+        if (!$(this).val()) {
+            return $('.name').getError('输入的用户名不能为空');
+        } else {
+            // 创建实例对象
+            var xhr = new XMLHttpRequest();
+            xhr.open('get', 'http://127.0.0.1:8080/isUserNameExist?name=' + $(this).val());
+            xhr.send();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var res = JSON.parse(xhr.responseText);
+                    console.log(res); //如果数据库中有 同样的数据的话 那么code就会返回401
+                    if (res.code === 200) { //code是判断这个数据在服务器返回的内容是不是你想要的
+                        $('.name').getCorrect(res.msg);
+                    } else {
+                        $('.name').getError(res.msg);
+                    }
+                }
+            }
+        }
+    })
+
+
+    $('input[name="pwd"]').on('blur', function () {
+        if (!$(this).val()) {
+            return $('.pwd').getError('输入的密码不能为空');
+        }else{
+            return $('.pwd').getCorrect('√');
+        }
+    })
+
+    $('.repwd input').on('blur', function () {
+        if (!$(this).val()) {
+            return $('.repwd').getError('输入的密码不能为空');
+        } else {
+            if ($(this).val() !== $('input[name="pwd"]').val()) {
+                return $('.repwd').getError('输入的密码不一致');
+            } else {
+                return $('.repwd').getCorrect('√');
+            }
+        }
+
+    });
+
+
+    $('form').on('submit', function (e) {
+        e.preventDefault();//还有另一种写法 window.event.preventDefault()
+
+        if (!$(this).checkForm()) {
+            $.fn.toast('请正确填写表单');
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', 'http://127.0.0.1:8080/doRegister');
+            // 设置请求头
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            // 将表单的数据获取 并且发送请求
+            xhr.send(serialize($('form')));//serialize 这个方法是extend封装好的 将伪数组转换成  键=值&键=值 的类型
+            // 给这个数据 监听一个通信事件
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 那么这个数据就会从服务器响应回来 但是响应回来的数据是JSON字符串类型 所以我们要转换成js对象类型
+                    var data = JSON.parse(xhr.response);
+                    console.log(data);
+                    if (data.code === 200) {
+                        alert(data.msg);
+                    }
+                }
+            }
+        }
+    })
+
+</script>
+
+
+</html>

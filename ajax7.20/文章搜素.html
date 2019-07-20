@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>动态网页</title>
+    <style>
+        @keyframes linear {
+            50% {
+                background-color: #ff00ff;
+            }
+
+            100% {
+                background-color: #00cfff;
+            }
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #e7e7e7;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #app {
+            width: 375px;
+            margin: auto;
+            height: 100vh;
+            background-color: #fff;
+        }
+
+        header {
+            /* height: 36px; */
+            padding: 6px 10px;
+            background-color: #fa0000;
+            animation: linear 10s linear 0s infinite alternate forwards;
+        }
+
+        input {
+            border: 0;
+            width: 100%;
+            outline: none;
+            border-radius: 20px;
+            height: 30px;
+            text-indent: 16px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 30px;
+            border-bottom: 1px solid #c7c7c7;
+            padding-left: 10px;
+        }
+
+        footer {}
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <input id="filter" type="text" placeholder="请输入搜索内容">
+        </header>
+        <div class="content">
+            <li></li>
+            <li></li>
+        </div>
+    </div>
+    <script src="./js/jquery.js"></script>
+    <script>
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('get', 'http://127.0.0.1:8080/getArticle');
+        // xhr.send();
+        // xhr.onreadystatechange = function () {
+        //     if (xhr.readyState === 4 && xhr.status === 200) {
+        //         var jsonStr = xhr.response;
+        //         var res = JSON.parse(jsonStr);
+        //         //    console.log(res);
+        //         res.data.forEach(e => {
+        //             $('<li>').html(e.content).appendTo($('.content'));
+        //         });
+        //     }
+        // }
+
+
+        // 需求：根据输入内容请求文章数据
+        // 1.监听输入框的输入时间 input
+        // $('#filter').on('input',function(){
+        //     // console.log(e);
+        //     var val = $(this).val();
+        //     // 创建ajax
+        //     var xhr = new XMLHttpRequest();
+        //     // 根据输入内容拿，这时候要在请求地址的后面加url参数
+        //     xhr.open('get','http://127.0.0.1:8080/getSearchArticle?search=' + val);
+        //     xhr.send();
+
+        //     xhr.onreadystatechange = function(){
+        //         if(xhr.readyState === 4 && xhr.status === 200){
+        //             var res = JSON.parse(xhr.responseText);
+        //             $('.content').html('');
+        //             res.data.forEach(e=>{
+        //                 $('<li>').html(e.content).appendTo($('.content'));
+        //             })
+        //         }
+        //     }
+        // })
+
+
+        // $('#filter').on('input',function(){
+        //     // 先获取输入框内容
+        //     let val = $(this).val();
+        //     // 创建XMLHttpRequest的实例
+        //     let xhr = new XMLHttpRequest();
+        //     // 获取的方式 根据输入内容拿，这时候就要在请求地址的后面加url参数
+        //     xhr.open('get','http://127.0.0.1:8080/getSearchArticle?search=' + val);
+        //     // 发送请求
+        //     xhr.send();
+        //     // 监控通信
+        //     xhr.onreadystatechange = function(){
+        //         // 判断请求的状态，还有响应状态
+        //         if(xhr.readyState === 4 && xhr.status === 200){
+        //             let res = JSON.parse(xhr.response);
+        //             // console.log(res);
+        //             $('.content').html('');
+        //             // 遍历数组
+        //             res.data.forEach(e => {
+        //                 // 将每个元素里面的内容添加到页面中
+        //                 $('<li>').html(e.content).appendTo($('.coentent'));
+        //                 // console.log(res);
+        //             });
+        //         }
+        //     }
+        // })
+
+
+        $('#filter').on('input', function () {
+            // 2.获取输入的内容
+            var val = $(this).val();
+            // 3.创建ajax对象
+            var xhr = new XMLHttpRequest();
+            // 根据输入的内容来获取，这时候我们就要请求地址的后面在url参数
+            xhr.open('get', 'http://127.0.0.1:8080/getSearchArticle?search=' + val);
+            // 发送请求
+            xhr.send();
+            // 监听通信
+            xhr.onreadystatechange = function () {
+                // console.log(123);
+                // 判断请求的状态，还有响应状态
+                if(xhr.readyState === 4 && xhr.status === 200){
+                    // 将数据响应回来 并且转换成对象
+                    var res = JSON.parse(xhr.response);
+                    console.log(xhr.response);
+                    $('.content').html('');
+                    res.data.forEach(e => {
+                        console.log(e);
+                        $('<li>').html(e.content).appendTo($('.content'));
+                    });
+                }
+            }
+        })
+
+        
+    </script>
+</body>
+
+</html>
