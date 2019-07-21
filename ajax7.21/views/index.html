@@ -1,0 +1,190 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hero - Admin</title>
+  <link rel="stylesheet" href="../static/css/bootstrap.css">
+  <style>
+    .hero-list img {
+      width: 50px;
+      height: 50px;
+      display: block
+    }
+
+    .hero-list td {
+      height: 50px;
+      line-height: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="page-header container">
+      <h1>王者荣耀 <small>英雄管理器</small></h1>
+
+      <a href="javascript:void(0);" class="btn btn-exit btn-primary" hidden style='float:right;'>退出</a>
+      <a href="login.html" class="btn btn-login btn-success" style='float:right'>登录</a>
+    </div>
+  </header>
+  <div class="container hero-list">
+    <a class="btn btn-add btn-success pull-right" hidden href="./add.html">添加英雄</a>
+    <table class="table table-hover" hidden>
+      <thead>
+        <tr>
+          <th>编号</th>
+          <th>名称</th>
+          <th>性别</th>
+          <th>头像</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- <tr>
+          <td>1</td>
+          <td>狗蛋</td>
+          <td>男</td>
+          <td><img src="../static/images/0.jpg"></td>
+          <td><a href="./edit.html?id=1">修改</a> 
+            <a data-id="1" href="javscript:void(0);">删除</a>
+          </td>
+        </tr> -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">提示</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            你确定要删除吗？
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary btn-sure-del" data-id="null">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<!-- 模板里面没有注释语法的，不能在写注释 -->
+<!-- 因为我们还要生成多个tr 所以要用for循环 -->
+<!-- 这里的$data永远指向 你传入的数据 -->
+<script type="text/template" id="tp">
+    <% for(var i = 0; i < $data.length; i++){ %>
+      <tr>
+          <td><%=$data[i].id%></td>
+          <td><%=$data[i].name%></td>
+          <td><%=$data[i].gender%></td>
+          <td><img src="../static/images/<%=$data[i].img%>"></td>
+          <td><a href="./edit.html?id=1">修改</a> 
+            <a data-id="1" href="javscript:void(0);">删除</a>
+          </td>
+        </tr>
+    <% } %>
+</script>
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/ajax.js"></script>
+<script src="../static/js/template-web.js"></script>
+<script>
+  /*
+    并不是谁都能看英雄数据的，必须登录之后，但是登录是在登录页面实现的，现在已经到了主页了，主页并不知道曾经是否登录过，需要再次去服务器进行验证
+    所以还要使用ajax进行登录校验
+    
+    
+    或者登录过期了这种 => 这种情况下 只有数据库知道 所以我们又要引用这个ajax来发送请求
+  */
+
+  // 那么要怎么判断这个用户是否已经登录了呢？
+  // 我们在登录的页面那里 在登录成功的时候就先将一个对应用户的id 存入本地数据 当跳转到这个页面的时候 就判断这个
+  // 获取存储在本地数据里面的id
+  let userId = localStorage.getItem('userId');
+  // 判断有没登录 就是这个id 有没有在本地存储
+  if (!userId) {
+    alert('请先登录后在操作');
+    location.href = './login.html';
+  } else {
+    // 不要因为上面验证过登录信息而不在验证登录信息
+    // 因为 我们数据库不会一直存着用户的登录信息 时间久了 不用这个网站的话 数据库会定时清除登录信息 也就是要访问服务器 查看有没有这个数据
+    // 会登录过期的情况
+    // 那就要用到ajax
+    ajax({
+      url: 'http://127.0.0.1:8080/isLogin',
+      data: 'id=' + userId,
+      callback: function (res) {
+        res = JSON.parse(res);
+        // console.log(res); code : 200 登录过了
+        if (res.code === 200) {
+          // 那么先把页面中的登录隐藏
+          $('.page-header a:last-child').attr('hidden', true);
+          // 把该显示的显示
+          // $('.page-header a:nth-child(2),.hero-list a:first-child,table').attr('hidden',false); 两种写法
+          $('.page-header a:nth-child(2),.hero-list a:first-child,table').removeAttr('hidden');
+          // 还要从数据库中获取数据 添加结构到页面中
+          ajax({
+            url: 'http://127.0.0.1:8080/getAllHero',
+            type: 'post',
+            callback: function (res) {
+              res = JSON.parse(res);
+              // console.log(res);
+              if (res.code === 200) {//如果数据库中有对应数据 就会返回code : 200
+                // 使用template模板来生成结构  为了结构代码和逻辑代码的分离
+                let html = template('tp',res.data); // 因为template返回的是一个字符串
+                $('#tbody').html(html);
+
+
+                // 这种的话 只会解析一次 所以 效率会高些
+                // let html = '';
+                // res.data.forEach(e => {
+                //   html += `<tr>
+                //           <td>${e.id}</td>
+                //           <td>${e.name}</td>
+                //           <td>${e.gender}</td>
+                //           <td><img src="../static/images/${e.img}"></td>
+                //           <td><a href="./edit.html?id=1">修改</a> 
+                //             <a data-id="1" href="javscript:void(0);">删除</a>
+                //           </td>
+                //         </tr>`;
+                // });
+                // $('#tbody').html(html);
+
+
+                // 这种写法的循环次数越多 解析的次数就越多 效率就会变低 所以我们不推荐使用这种
+                // res.data.forEach(e => {
+                //   let tr =  `<tr>
+                //           <td>${e.id}</td>
+                //           <td>${e.name}</td>
+                //           <td>${e.gender}</td>
+                //           <td><img src="../static/images/${e.img}"></td>
+                //           <td><a href="./edit.html?id=1">修改</a> 
+                //             <a data-id="1" href="javscript:void(0);">删除</a>
+                //           </td>
+                //         </tr>`;
+                //         $(tr).appendTo('#tbody');
+                //         $('#tbody').append(tr);
+                // });                
+              }
+            }
+          })
+        } else {
+          alert('您的登录信息已过期，请重新登录');
+          location.href = './login.html';
+        }
+      }
+    })
+  }
+
+
+</script>
+
+</html>
