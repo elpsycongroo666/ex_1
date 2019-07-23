@@ -1,0 +1,261 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hero - Admin</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <style>
+        .hero-list img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="page-header container">
+            <h1>王者荣耀 <small>英雄管理器</small></h1>
+        </div>
+    </header>
+    <div class="container hero-list">
+        <form id='myform'>
+            <input type="hidden" name="img" id="headSrc">
+            <!-- 这里做了一个表单 但是什么都不放 因为 我们serialize()这个方法是通过name属性来获取数据转换成键=值&键=值的形式的 但是我们下面存储图片的地方是img不存在这个属性 所以们为了使用serialize这个方法 在这里创建一个看不见的表单元素 -->
+            <table class="table table-hover">
+                <tbody>
+                    <tr>
+                        <td>姓名：</td>
+                        <td><input type="text" name="name"></td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td><input id="nan" name="gender" checked value="男" type="radio"><label for="nan">男</label>
+                            <input name="gender" value="女" type="radio" id="nv"><label for="nv">女</label></td>
+                    </tr>
+                    <tr>
+                        <td>头像：</td>
+                        <td><img src="../static/images/0.jpg" alt="" id="photo" width="100">
+                            <input type="file" id="img"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input class="btn btn-primary" type="button" id="sub" value="新增"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提水</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        新增失败
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="../static/js/jquery.js"></script>
+<script>
+    /*
+        使用ajax上传文件
+         本身ajax是无法上传文件的，需要配合一个新的对象使用
+            FormData
+                作用：收集表单数据
+
+                怎么用： let 变量 = new FormData(表单元素)
+    */
+
+    /*
+        要上传图片，是点击文件选择按钮之后，再来获取数据
+
+            给选择文件按钮注册事件，但是不是点击事件，而是另一个新的事件：
+                change - 改变事件
+                    该事件会在表单控件的value属性发生变化之后触发
+
+        上传图片的步骤：
+            1.注册事件
+            2.在事件处理程序里面获取图片
+            2.5 把图片转换成文件流 - FormData
+            3.使用ajax把图片上传到服务器
+    */
+
+    // $('#img').on('change', function () {
+    //     // console.log(this);
+    //     console.log(this.files);
+    //     // 获取文件
+    //     // console.log(this.files[0]);
+    //     let file = this.files[0];
+    //     // 把图片转换成文件流的形式
+    //     // 那么就要使用formdata这个构造函数
+    //     // 使用这个函数的实例对象来调用方法 append
+    //     let fd = new FormData();
+    //     // 调用formdata对象的把数据添加到它里面的方法
+    //     // fd.append('键','值'); 服务器会根据键得到对应的值
+    //     fd.append('pic', file);  //pic这个键 就是这个服务器的文档里面
+    //     // 使用ajax发送请求
+    //     let xhr = new XMLHttpRequest();
+    //     xhr.open('post', 'http://127.0.0.1:8080/uploadHeadImg');
+    //     // 以前我们会在发送请求之前，先设置一个请求头，但是如果是FormData对象，会自动的设置一个最合适的请求头，我们就不用自己设置了
+    //     xhr.send(fd);
+    //     xhr.onreadystatechange = function () {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //             // console.log(xhr.response);
+    //             // let res = JSON.parse(xhr.response);
+    //             // res => {"code":200,"msg":"上传成功","filePath":"upload_c2590b02e487a3c64aceab18b8448ec3.jpg","baseDir":"../static/images/"}
+    //             // 服务器返回的内容是json
+    //             let res = JSON.parse(xhr.response);
+    //             // console.log(res);
+    //             if (res.code === 200) {
+    //                 // 如果有这个数据的话 那么就把图片地址修改一下 形成一个预览的效果
+    //                 // 那么我们就要获取这个图片的元素 设置 attr 里面的src 就可以了
+    //                 $('#photo').attr('src', res.baseDir + res.filePath);
+    //             }
+    //         }
+    //     }
+    // })
+
+    // $('#img').on('change', function () {
+    //     // 先获取文件
+    //     let file = this.files[0];//=> files 获取出来的是个伪数组 
+    //     // 然后又因为我们的ajax 是不能直接传文件到服务器的 所以我们需要先将要传到服务器的文件 转换成 文件流
+    //     // 那么我们就需要使用到FormData()这个构造函数 构造出来的实例对象的方法 
+    //     let fd = new FormData();
+    //     // 把要转成文件流的文件 调用 append(键,值) 的形式传入
+    //     fd.append('pic', file) // =>这里的键 就是指你服务器api的 file就是你想要转换的
+    //     // 转换完成之后 我们就要用ajax传入到服务器
+    //     let xhr = new XMLHttpRequest();
+    //     xhr.open('post', 'http://127.0.0.1:8080/uploadHeadImg');
+    //     // 因为我们FormData这个对象，会自动设置一个最合适的请求头 ，我们自己就不用设置了
+    //     xhr.send(fd);
+    //     xhr.onreadystatechange = function () {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //             // 获取服务器响应的数据
+    //             // console.log(xhr.response);
+    //             let res = JSON.parse(xhr.response);
+    //             console.log(res); // => {code: 200, msg: "上传成功", filePath: "upload_fdde7cd5aa2ab2381103d9ad53cf7630.jpg", baseDir: "../static/images/"}
+    //             if (res.code === 200) {
+    //                 // 当这个数据是存的的时候 那么我们就 将对应的图片调换 形成预览效果
+    //                 $('#photo').attr('src', res.baseDir + res.filePath);
+    //                 // 上传成功之后，要把图片的名字，写入隐藏域，以便我们在点击添加的时候 数据的获取
+    //                 $('#headSrc').val(res.filePath);
+    //             }
+    //         }
+    //     }
+    // })
+    let btn = document.querySelector('#img');
+    btn.onchange = function () {
+        // 获取文件
+        let file = this.files[0];
+        // 将文件转成 文件流的形式
+        let fd = new FormData();
+        // 使用这个对象的方法添加
+        fd.append('pic', file); // => 这个pic是文档来的
+        // 我们要使用jq中带的ajax的方法
+        // console.log(data);
+        $.ajax({
+            url: 'http://127.0.0.1:8080/uploadHeadImg',
+            type: 'post',
+            data: fd,
+            // => 直接传数据进来是不行的 formdata会自己设置请求头 而且 还需要转换成 键=值&键=值的形式 来传递到服务器 所以 我们这里要多设置两个东西
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                // 请求成功之后我们就需要把 对应的图片换上的
+                // 先看看res
+                // console.log(res); {code: 200, msg: "上传成功", filePath: "upload_41cabc41e09b3d70bd35878919179870.jpg", baseDir: "../static/images/"}
+                $('#photo').attr('src', res.baseDir + res.filePath);
+                // 为了方便我们后面点击添加的时候 获取数据
+                $('#headSrc').val(res.filePath);
+            }
+        })
+    }
+
+
+    // $('#sub').on('click',function(){
+    //     if($('tbody input[name=name]').val().trim().length === 0){
+    //         alert('用户名不能为空');
+    //         return;
+    //     }
+    //     // 获取表单的数据
+    //     let data = $('form').serialize();
+    //     console.log(data); //发现img是没有值的 为什么没有值？看上面的input结构的解释
+    //     // 然后将数据通过ajax发送请求
+    //     $.ajax({
+    //         type : 'post',
+    //         url : 'http://127.0.0.1:8080/addNewHero',
+    //         data : data,
+    //         success : function(res){
+    //             if(res.code === 200){
+    //                 alert(res.msg);
+    //                 // location.href = './index.html';
+    //             }
+    //         }
+    //     })
+    // })
+
+    // $('#sub').on('click', function () {
+    //     // 首先判断用户名是否为空
+    //     if ($('tbody input[name=name]').val().trim().length === 0) {
+    //         alert('用户名不能为空');
+    //         return;
+    //     }
+    //     // 获取表单的数据
+    //     let data = $('form').serialize();
+    //     console.log(data);
+
+    //     // 那么就发送数据到服务器
+    //     $.ajax({
+    //         url : 'http://127.0.0.1:8080/addNewHero',
+    //         data : data,
+    //         type : 'post',
+    //         success : function(res){
+    //             alert(res.msg);
+    //             location.href = './index.html';
+    //         }
+    //     })
+    // })
+
+    // 当我们点击新增的时候 就要把数据 上传到服务器 
+    $('#sub').on('click', function () {
+        // 常识 先判断用户名不能为空
+        if ($('tbody input[name=name]').val().trim().length === 0) {
+            alert('用户名不能为空');
+            return;
+        }
+        // 获取表单的数据
+        let data = $('form').serialize(); // 这个是别人写好的方法 我们最好先看看这个获取的数据是什么样子的
+        // console.log(data);
+        // 我们发现 这个数据是 img=&name=1&gender=%E7%94%B7 
+        // 没有img的值 所以 我们 引用一个 隐藏域 => 先在结构中 写入一个input  因我们需要使用serialize()这个方法来获取表单数据 然而这个方法 它是它是通过
+        // 获取表单的name属性来 转换数据的 所以 但是我们img标签是没有这个的 所以在上面做一个input 弄一个name 为 img的 在再之前传入这个值 
+        $.ajax({
+            url: 'http://127.0.0.1:8080/addNewHero',
+            type: 'post',
+            data: data,
+            success: function (res) {
+                if (res.code === 200) {
+                    alert(res.msg);
+                    location.href = './index.html';
+                }
+            }
+        })
+
+    })
+</script>
+
+</html>
