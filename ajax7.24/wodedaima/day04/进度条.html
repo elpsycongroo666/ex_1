@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../static/css/bootstrap.css">
+    <style>
+        .progress {
+            width: 80%;
+            margin: 100px auto;
+        }
+
+        .progress-bar {
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <input type="file" id="btn">
+    <div class="progress">
+        <div class="progress-bar bg-primary" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
+            aria-valuemax="100">0%</div>
+    </div>
+</body>
+<!-- <script src="../../static/js/jquery.js"></script> -->
+<script src="../../static/js/bootstrap.js"></script>
+<script>
+    /*
+    ajax的上传事件
+
+        ajax在XMLHttpRequest 2.0里面提供了一个事件，是ajax的上传事件
+
+        从xhr身上获取
+            let xhr = new XMLHttpRequest();
+            xhr.upload.onprogress 事件，该事件会在上传的时候触发
+
+        计算上传的进度
+            进度 = 已经上传 / 总共要上传的
+            事件对象.loaded 已经上传了多少
+            事件对象.total 总共要上传的
+    
+    */
+    let bar = document.querySelector('.progress-bar');
+    let btn = document.querySelector('#btn');
+    btn.onchange = function(){
+        // 先获取文件
+        let file =  this.files[0];
+        // 将文件转成 文件流的形式
+        let fd = new FormData();
+        // 用append 增加
+        fd.append('pic',file);
+        // 使用ajax请求发送
+        // $.ajax({
+        //     url : 'http://127.0.0.1:8080/uploadHeadImg',
+        //     data : fd,
+        //     type : 'post',
+        //     success : function(res){
+        //         if(res.code === 200){
+        //             console.log(res.msg);
+        //         }
+        //     }
+        // })
+        let xhr = new XMLHttpRequest();
+        xhr.open('post','http://127.0.0.1:8080/uploadHeadImg');
+
+        // 我们要看进度条 所以我们要在发送请求之前 先注册正在上传的事件
+        xhr.upload.onprogress = function(e){
+
+            // 保留两位小数 ： * 10000 取整 / 100
+            let percent = parseInt(e.loaded / e.total * 10000) / 100 + '%' ;
+            // 通过设置宽度来得到进度条
+            bar.style.width = percent;
+            bar.innerText = percent;
+        }
+        xhr.send(fd);
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState === 4 && xhr.status === 200){
+                let res = JSON.parse(xhr.responseText);
+                console.log(res);
+            }
+        }
+
+    }
+
+</script>
+</html>

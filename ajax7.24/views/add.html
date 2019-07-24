@@ -1,0 +1,135 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hero - Admin</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <style>
+        .hero-list img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="page-header container">
+            <h1>王者荣耀 <small>英雄管理器</small></h1>
+        </div>
+    </header>
+    <div class="container hero-list">
+        <form id='myform'>  
+            <input type="hidden" name="img" value="0.jpg" id="headSrc">
+            <table class="table table-hover">
+                <tbody>
+                    <tr>
+                        <td>姓名：</td>
+                        <td><input type="text" name="name"></td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td><input id="nan" checked name="gender" value="男" type="radio"><label for="nan">男</label>
+                            <input name="gender" value="女" type="radio" id="nv"><label for="nv">女</label></td>
+                    </tr>
+                    <tr>
+                        <td>头像：</td>
+                        <td><img src="../static/images/0.jpg" alt="" id="photo" width="100">
+                            <input type="file" id="img"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input class="btn btn-primary" type="button" id="sub" value="新增"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提水</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        新增失败
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="../static/js/jquery.js"></script>
+<script>
+    $('#img').on('change', function () {
+        // 获取图片
+        let file = this.files[0];
+        // 把图片转换为文件流
+        let fd = new FormData();
+        fd.append('pic',file);
+        // 使用jquery的ajax方法，实现上传
+        $.ajax({
+            type: 'post',
+            url: 'http://127.0.0.1:8080/uploadHeadImg',
+            data: fd,
+            // 如果使用jquery的方式上传文件，告诉jq的ajax，不要动请求头
+            contentType : false,
+            // 如果使用jquery的ajax上传文件，也是使用FormData实现的，jquery默认会对对象类型的数据，进行转换，转换为键=值的形式 - fd对象需要转换吗？
+            // 告诉jquery的ajajx。不要动我的数据
+            processData: false,
+            success: function (res) {
+                // console.log(res);
+                if(res.code === 200){
+                    // 如果请求成功那么就把对应的图片修改
+                    $('#photo').attr('src',res.baseDir + res.filePath);
+                    // 为了后面新增按钮的隐藏域，我们在这里把表单控件先设置好value属性
+                    $('#headSrc').val(res.filePath);
+                }
+            }
+        })
+    })
+    // 键=值&键=值;
+    // $('form').serialize();
+    // -----------------
+    // 实现新增的效果
+    // 1 获取按钮，注册点击事件
+    $("#sub").on('click', function () {
+        //非空判断
+        if ($('tbody input[type=text]').val().trim().length === 0) {
+            alert('用户名不能为空');
+            return;
+        }
+        // 2 获取表单的数据
+        let data = $('form').serialize();
+        // 这个东西是别人封装的，不一定就是我们想要的数据，最好每次提交之前，先输出看看是否满足需求
+        // console.log(data);
+        $.ajax({
+            type: 'post',
+            url: 'http://127.0.0.1:8080/addNewHero',
+            data: data,
+            success: function (res) {
+                // console.log(res);
+                // 成功之后，要提示用户
+                if (res.code == 200) {
+                    alert('新增成功');
+                    location.href = './index.html';
+                }
+            }
+        });
+    })
+
+
+
+
+</script>
+
+</html>

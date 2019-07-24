@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+<script>
+/*
+  在写ajax的请求的时候，经常发现键和值的名字是一样的
+
+  在es6里面，为了简化这个操作，提供了一个新语法
+    对象的新语法：
+      let id = 1;
+      let obj = { id }
+*/
+
+let name = '狗蛋';
+let age = 12;
+let id = 1;
+
+// 如果外面已经有了很多的和对象的键名同名的变量，声明对象的时候，就可以直接使用这个简洁的语法
+let obj = { name,age,id}
+console.log(obj);
+</script>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <input type="file" id="file">
+</body>
+<script src="../../static/js/ajax.js"></script>
+<script>
+let btn = document.querySelector('#file');
+btn.onchange = function(){
+  let file = this.files[0];
+  let fd = new FormData();
+  fd.append('pic',file);
+  ajax({
+    type : 'post',
+    url : 'http://127.0.0.1:8080/uploadHeadImg',
+    data : fd,
+    callback : function(res){
+      console.log(res);
+    }
+  });
+}
+</script>
+</html>
