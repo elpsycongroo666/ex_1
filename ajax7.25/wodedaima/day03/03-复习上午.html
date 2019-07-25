@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <!-- multiple 该属性可以指示文件是否可以多选 -->
+  <input type="file" name="" id="" multiple>
+</body>
+<script>
+/*
+  模板引擎的简洁语法
+    输出变量
+    {{ 变量 }}
+
+    判断
+    {{ if(条件) }}
+      满足条件的时候出现的结构
+    {{/if}}
+
+    {{ if(条件) }}
+
+    {{ else if (条件) }}
+
+    {{/if}}
+
+    循环
+    {{ each $data val index}}
+      重复的结构
+    {{/each}}
+
+  图片上传
+    FormData
+      收集表单数据 - 看起来比我们自己收集更加安全
+
+    用法
+      let fd = new ForamData(表单元素);
+
+      添加更多的数据或者把文件转换为文件流
+        fd.append(键,值); - 把键值对放到formdata对象里面
+
+    $().append(); - 追加子元素
+      面向对象思想：
+        找厨师做饭
+        找保安看大门
+        找保镖打架
+
+          找厨师打架 - 合适吗？ 不擅长
+        找对象，一定要找正确的对象，才能指挥对象作出合适的动作
+        不同的对象要有不同的方法
+        即使不同的对象有同名的方法 - 也不一定是一样的功能
+
+  为什么要把文件转换为文件流
+    - 网络
+    - 网络的传输速度是有限的，文件传输可能不能一下全都传输完成，需要一定的时间
+    - 需要先把文件转换为文件流 ，依据网络的传输速率，一点一点的往服务器传输
+
+  把图片上传要分几步：
+    1.注册事件 - 不用click，使用change - 表单控件的value属性发生改变的时候触发
+    2.获取文件 - 文件选择按钮.files - 伪数组，里面有所有的选中的文件
+    3.把获取到的文件转换为文件流 - formdata
+    4.使用ajax上传 - 不要使用昨天封装的ajax
+*/
+</script>
+</html>

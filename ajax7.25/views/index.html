@@ -1,0 +1,218 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hero - Admin</title>
+  <link rel="stylesheet" href="../static/css/bootstrap.css">
+  <style>
+    .hero-list img {
+      width: 50px;
+      height: 50px;
+      display: block
+    }
+
+    .hero-list td {
+      height: 50px;
+      line-height: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="page-header container">
+      <h1>王者荣耀 <small>英雄管理器</small></h1>
+
+      <a href="javascript:void(0);" class="btn btn-exit btn-primary" hidden style='float:right;'>退出</a>
+      <a href="login.html" class="btn btn-login btn-success" style='float:right'>登录</a>
+    </div>
+  </header>
+  <div class="container hero-list">
+    <a class="btn btn-add btn-success pull-right" hidden href="./add.html">添加英雄</a>
+    <table class="table table-hover" hidden>
+      <thead>
+        <tr>
+          <th>编号</th>
+          <th>名称</th>
+          <th>性别</th>
+          <th>头像</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- <tr>
+          <td>1</td>
+          <td>狗蛋</td>
+          <td>男</td>
+          <td><img src="../static/images/0.jpg"></td>
+          <td><a href="./edit.html?id=1">修改</a> 
+            <a data-id="1" href="javscript:void(0);">删除</a>
+          </td>
+        </tr> -->
+      </tbody>
+    </table>
+  </div>
+  <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">提示</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            你确定要删除吗
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal  -->
+  <!-- id相同了 所以这里我们自己该一个id -->
+  <div class="modal fade" id="alert" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">提示</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            Add rows here
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+          <!-- <button type="button" class="btn btn-primary">Save</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/template-web.js"></script>
+<SCript src="../static/js/bootstrap.js"></SCript>
+<script>
+  $(function () {
+    // 跳转过来 我们需要先判断 这个用户有没有登录过 根据本地存储的id
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('你还没有登录过，请先登录后再进行操作');
+      // 强制跳转回登录页面
+      location.href = './login.html';
+    } else {
+      // 如果登录过了 那么就判断这个用户的登录有没有过期
+      // 通过发送请求到服务器知道
+      $.ajax({
+        url: 'http://127.0.0.1:8080/isLogin',
+        data: { id: userId },
+        success: function (res) {
+          if (res.code === 200) {
+            // 那就是登录过了
+            // 那就把该隐藏的隐藏 该显示的显示
+            $('.btn-login').attr('hidden', true);
+            // 把该显示的显示
+            $('.btn-exit').attr('hidden', false); //也可以removeAttr()
+            $('.btn-add').attr('hidden', false);
+            $('.table').attr('hidden', false);
+            // 获取数据添加到页面中
+            $.ajax({
+              url: 'http://127.0.0.1:8080/getAllHero',
+              type: 'post',
+              success: function (res) {
+                if (res.code) {
+                  // 使用模板引擎
+                  let str = template('tp', res.data);
+                  $('#tbody').html(str);
+                }
+              }
+            })
+          }
+        }
+      })
+    }
+
+    // 给删除按钮注册事件
+    // 要用事件委托来注册
+    let _this
+    let id;
+    $("#tbody").on('click', 'a:last-child', function () {
+      // 根据id删除对应的数据
+      // 我们在生成结构的时候 就存入了一个自定义id 所以 在这里获取就可以了
+      id = $(this).attr('data-id');
+      // 先出弹框 因为删除这个动作是很危险的 所以我们要提示
+      $('#modelId').modal();
+      // 获取到了之后，我们要发送请求
+      _this = this;
+    })
+    $('#modelId .btn-primary').on('click', function () {
+      // 请求成功之后，注册点击事件
+      // 如果点的是确定 那么就删除数据
+      // 先把之前出现的隐藏框隐藏
+      $('#modelId').modal('hide');
+      $.ajax({
+        url: 'http://127.0.0.1:8080/deleteHeroById',
+        data: { id: id },
+        success: function (res) {
+          if (res.code === 200) {
+              // 先修改信息
+              $('#alert .container-fluid').text(res.msg);
+              // 弹框提示
+              $('#alert').modal();
+              // 删除tr
+              $(_this).parents('tr').remove();
+          }
+        }
+      })
+    })
+
+  })//入口函数
+</script>
+<script type='text/template' id="tp">
+  {{ each $data val}}
+  <tr>
+      <td>{{val.id}}</td>
+      <td>{{val.name}}</td>
+      <td>{{val.gender}}</td>
+      <td><img src="../static/images/{{val.img}}"></td>
+      <td><a href="./edit.html?id={{val.id}}">修改</a> 
+        <a data-id="{{val.id}}" href="javscript:void(0);">删除</a>
+      </td>
+    </tr> 
+  {{/each}}
+</script>
+
+</html>

@@ -1,0 +1,271 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hero - Admin</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <style>
+        .hero-list img {
+            width: 50px;
+        }
+
+        .mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .3);
+        }
+
+        .progress {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 40px;
+            transform: translate(-50%, -50%);
+        }
+
+        .progress-bar {
+            color: pink;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="page-header container">
+            <h1>王者荣耀 <small>英雄管理器</small></h1>
+        </div>
+    </header>
+    <div class="container hero-list">
+        <form id="form">
+            <input type="hidden" id="id" name='id' value="1">
+            <input type="hidden" name="img" id="headSrc" value="">
+            <table class="table table-hover">
+                <tbody>
+                    <tr>
+                        <td>姓名：</td>
+                        <td><input type="text" id="name" name="name" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td>
+                            <input id="nan" name="gender" value="男" type="radio" checked><label for="nan">男</label>
+                            <input name="gender" value="女" type="radio" id="nv"><label for="nv">女</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>头像：</td>
+                        <td><img src="../static/images/0.jpg" alt="" id="photo" width="100">
+                            <input type="file" id="img"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="button" class="btn btn-primary" id="sub" value="完成"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <div class="mask" hidden></div>
+    <div class="progress" hidden>
+        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0"
+            aria-valuemax="100">0%</div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提示</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        Add rows here
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="nonEmpty" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提示</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        Add rows here
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="submit" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提示</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        修改成功
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/kits.js"></script>
+<script src="../static/js/bootstrap.js"></script>
+<script>
+    // 当我们点击修改的时候，会跳转到这个页面 那么 我们就要先获取用户本来拥有的数据
+    let obj = kits.getUrlParams();
+    let id = obj.id;
+    $.ajax({
+        url: 'http://127.0.0.1:8080/getHeroById',
+        data: { id: id },
+        success: function (res) {
+            $('#name').val(res.data.name);
+            // console.log(res);
+            // 获取性别
+            if (res.data.gender == '男') {
+                $('#nan').prop('checked', true);
+            } else {
+                $('#nv').prop('checked', true);
+            }
+            // 获取图片
+            $('#photo').attr('src', '../static/images/' + res.data.img);
+            // 以防万一 ，要在用户没有修改数据的情况下 也要修改隐藏域的值
+            $('#headSrc').val(res.data.img);
+            // id的隐藏域也要在这里获取
+            $('#id').val(res.data.id);
+        }
+    })
+
+    // 设置上传文件的事件
+    $("#img").on('change', function () {
+        // 先获取文件
+        let file = this.files[0];
+        // 将文件转成文件流的形式
+        let fd = new FormData();
+        fd.append('pic', file);
+        // 点击按钮之后 就要把遮罩和进度条显示
+        $('.mask').removeAttr('hidden');
+        $('.progress').removeAttr('hidden');
+        // 发送到服务器
+        $.ajax({
+            url: 'http://127.0.0.1:8080/uploadHeadImg',
+            data: fd,
+            type: 'post',
+            // 不用设置请求头
+            contentType: false,
+            // 不用转换数据
+            processData: false,
+            success: function (res) {
+                if (res.code === 200) {
+                    // 请求成功之后 弹出弹框
+                    // $('#modelId').modal();
+                    // $('#modelId .container-fluid').text(res.msg);
+                    // 点击关闭后 跳转回列表页
+                    // $('#modelId .btn-secondary').on('click', function () {
+                    //     location.href = './index.html';
+                    // })
+                    // 修改图片 code: 200, msg: "上传成功", filePath: "upload_ff2548eab0921f92e4d8d540dbbd4449.jpg",…}=
+                    $("#photo").attr('src',res.baseDir + res.filePath);
+                    // 设置隐藏域
+                    $('#headSrc').val(res.filePath);
+                }
+            },
+            xhr: function () {
+                // jq中的ajax还开自己定义一个
+                let xhr = new XMLHttpRequest();
+                // 在这里注册文件正在上传事件
+                xhr.upload.onprogress = function (e) {
+                    // 正在上传的事件中 的事件对象 e.loaded 是上传完成的 e.total是要上传的总量
+                    let percent = parseInt(e.loaded / e.total * 10000) / 100 + '%';
+                    // 获取框架中的内层div  设置他的宽度
+                    $('.progress-bar').width(percent).text(percent);//还要设置他的文字
+                }
+                return xhr; //要记得把这个xhr返回
+            },
+            // 有个无论上传是否成功都会执行的方法
+            complete: function () {
+                // 把进度条和遮罩隐藏
+                $('.mask').attr('hidden',true);
+                $('.progress').attr('hidden',true);
+                // 当出错的时候 要把进度条归零
+                $('.progress-bar').width(0);
+            },
+            error : function(){
+                alert('请求出错，请重试');
+            }
+        })
+    })
+
+    // 给完成按钮设置
+    $("#sub").on('click',function(){
+        // 先判断非空
+        if($('#name').val().trim().length === 200){
+            // alert('用户名不能为空');
+            $('#nonEmpty').modal();
+            // 修改提示信息
+            $('#nonEmpty .container-fluid').text('用户名不能为空');
+            return;
+        }else{
+            // 获取表单元素
+            let data = $('form').serialize();
+            // console.log(data);id=19&img=upload_7cf97d385ba9049e10ac0e68c32af0e5.jpg&name=123456&gender=%E5%A5%B3
+            $.ajax({
+                url : 'http://127.0.0.1:8080/eidtHeroById',
+                type : 'post',
+                data : data,
+                success : function(res){
+                    if(res.code === 200){
+                        // 请求成功 显示弹框
+                        $('#submit').modal();
+                        // 修改提示信息
+                        $('#submit .container-fluid').text(res.msg);
+                        // 点击关闭时候跳转
+                        $('#submit .btn-secondary').on('click',function(){
+                            location.href = './index.html';
+                        })
+                    }
+                }
+            })
+        }
+    })
+</script>
+
+</html>

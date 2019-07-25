@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <input type="button" value="验证用户名是否存在" id="btn">
+  <input type="button" value="登录" id="btn2">
+</body>
+<script src="../../static/js/jquery.js"></script>
+<script>
+/*
+  jquery封装了一套非常完美的ajax方法
+
+    用法：
+      $.ajax({
+        type : 请求方式,
+        url : 请求地址,
+        data : 携带的数据,
+        success : function(){} 请求成功的回调函数
+      });
+
+*/
+$('#btn').on('click',function(){
+  // jquery的ajax请求服务器
+  // $.ajax({
+  //   type : 'get',
+  //   url : 'http://127.0.0.1:8080/isUserNameExist',
+  //   data : 'userName=123',
+  //   success : function(res){
+  //     console.log(res);
+  //   }
+  // });
+});
+
+$('#btn2').on('click',function(){
+  $.ajax({
+    type : 'post',
+    url : 'http://127.0.0.1:8080/doLogin',
+    // data : 'userName=ligoudan&password=123456',
+    // data 参数接收两种类型 ： 1字符串，必须是键=值的形式，2对象，会自动的把对象帮我们转换为键=值的形式
+    data : {
+      userName : 'ligoudan',
+      password : '123456'
+    },
+    success: function(res){
+      console.log(res);
+    }
+  });
+})
+
+
+</script>
+</html>

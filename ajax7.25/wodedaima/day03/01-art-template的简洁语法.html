@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/js/template-web.js"></script>
+<script>
+$(function(){
+  // 如果写了入口函数，模板引擎的模板在哪里写就没关系了，但是如果没有写入口函数，必须在使用模板之前，定义模板结构
+
+  /*
+    简洁语法的固定用法：
+      {{}}
+    
+    输出变量
+      {{ 变量 }}
+    判断
+      {{ if(条件) }}
+        模板结构
+      {{/if}}
+
+      {{ if (条件) }}
+
+      {{ else if(条件) }}
+
+      {{/if}}
+
+    循环语法
+      {{ each $data 每个元素的变量名 索引 }}
+        重复的结构
+      {{/each}}
+  */
+  // let str = template('tp',{ name : '狗蛋' });
+  // console.log(str);
+
+  // let str = template('tp2',{ gender : '男'});
+  // console.log(str);
+
+  // let str = template('tp3',{ gender : '女'});
+  // console.log(str);
+
+  let arr = [
+    {name : '狗蛋'},{name:'翠花'},{name : '狗剩'}
+  ];
+  let str = template('tp4',arr);
+  console.log(str);
+});
+
+</script>
+<script type="text/template" id="tp">
+  <div>{{$data.name}}</div>
+</script>
+<script type="text/template" id="tp2">
+  {{ if($data.gender == '男') }}
+    <div>♂</div>
+  {{/if}}
+</script>
+<script type="text/template" id="tp3">
+  {{ if($data.gender == '男') }}
+    <div>♂</div>
+  {{ else if($data.gender == '女') }}
+    <div>♀</div>
+  {{/if}}
+</script>
+<script type="text/template" id="tp4">
+  {{ each $data val index }}
+    <li>{{val.name}} + {{ index }}</li>
+  {{/each}}
+</script>
+</html>
